@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy-deep: #071522;
+  --color-navy-dark: #101D2A;
+  --color-cream: #F7F0E6;
+  --color-warm-white: #FFFDF9;
+  --color-orange-primary: #FF6A21;
+  --color-orange-soft: #FF8A45;
+  --color-beige-light: #EDE3D5;
+  --color-whatsapp: #25D366;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-script: var(--font-caveat), cursive;
+}
+
+:root {
+  --navy-deep: #071522;
+  --navy-dark: #101D2A;
+  --cream: #F7F0E6;
+  --warm-white: #FFFDF9;
+  --orange-primary: #FF6A21;
+  --orange-soft: #FF8A45;
+  --beige-light: #EDE3D5;
+}
+
+html {
+  background-color: #071522;
+  color: #FFFDF9;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Lenis smooth scrolling rules */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Smooth organic clip-path curves */
+.curve-pill {
+  border-radius: 9999px;
+}
+
+.curve-card {
+  border-radius: 28px;
+}
+
+.curve-hero-bottom {
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
+
