@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useRef } from "react";
 import Link from "next/link";
@@ -14,9 +14,9 @@ interface MobileMenuProps {
 
 const navItems = [
   { id: "01", label: "Home", href: "/" },
-  { id: "02", label: "Collections", href: "/collections" },
-  { id: "03", label: "Custom Uniforms", href: "/custom" },
-  { id: "04", label: "Our Work", href: "/our-work" },
+  { id: "02", label: "Products", href: "/collections" },
+  { id: "03", label: "Customized", href: "/custom" },
+  { id: "04", label: "How It Works", href: "/our-work" },
   { id: "05", label: "Contact", href: "/contact" },
 ];
 
@@ -143,11 +143,11 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         })}
       </div>
 
-      {/* Footer contact quick info */}
+      {/* Footer quick contact info */}
       <div className="pt-6 border-t border-white/10 flex flex-col space-y-4">
         <div className="flex items-center justify-between text-xs text-white/50">
           <span>Premium Uniform Supplier</span>
-          <span className="text-[#FF6A21] font-mono">01 - 05</span>
+          <span className="text-[#FF6A21] font-mono">Chennai, India</span>
         </div>
         <div className="flex items-center justify-between text-xs text-white/70">
           <a
@@ -155,7 +155,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             className="flex items-center space-x-1.5 hover:text-[#FF6A21] transition-colors"
           >
             <PhoneCall size={13} className="text-[#FF6A21]" />
-            <span>+91 (0) 98765 43210</span>
+            <span>+91 98765 43210</span>
           </a>
           <a
             href="mailto:contact@unipod.in"

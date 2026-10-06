@@ -1,16 +1,16 @@
 ﻿"use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   ShieldCheck,
   Feather,
   Users,
+  Play,
   ArrowRight,
   ArrowDown,
-  Sparkles,
-  CheckCircle,
+  X,
 } from "lucide-react";
 import CircularButton from "@/components/CircularButton";
 import gsap from "gsap";
@@ -19,76 +19,72 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 const rangeCards = [
   {
     title: "School Uniforms",
-    category: "K-12 & High School",
     image: "/images/collections-school.jpg",
     href: "/collections",
   },
   {
     title: "College Uniforms",
-    category: "Higher Education & Academies",
     image: "/images/collections-college.jpg",
     href: "/collections",
   },
   {
     title: "Sportswear",
-    category: "Performance & Athletic Kits",
     image: "/images/collections-sports.jpg",
     href: "/collections",
   },
   {
     title: "Corporate Attire",
-    category: "Executive & Staff Apparel",
     image: "/images/collections-corporate.jpg",
     href: "/collections",
   },
   {
     title: "Accessories",
-    category: "Backpacks, Ties, Belts & Socks",
     image: "/images/collections-accessories.jpg",
     href: "/collections",
   },
 ];
 
 export default function HomePage() {
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
   const heroTextRef = useRef<HTMLDivElement>(null);
   const scrollIndicatorRef = useRef<HTMLDivElement>(null);
-  const crestCardRef = useRef<HTMLDivElement>(null);
+  const trustedSectionRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
-  const rangeHeaderRef = useRef<HTMLDivElement>(null);
-  const rangeCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const studentsCardRef = useRef<HTMLDivElement>(null);
+  const exploreHeaderRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      // 1. Initial Hero Entry Animation
-      const heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      heroTl
-        .fromTo(
-          heroImageRef.current,
-          { scale: 1.15, opacity: 0.7 },
-          { scale: 1, opacity: 1, duration: 1.5 }
-        )
+      // 1. Initial Hero Entry
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      tl.fromTo(
+        heroImageRef.current,
+        { scale: 1.15, opacity: 0.7 },
+        { scale: 1, opacity: 1, duration: 1.5 }
+      )
         .fromTo(
           heroTextRef.current?.children || [],
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, stagger: 0.12, duration: 0.9 },
+          { y: 35, opacity: 0 },
+          { y: 0, opacity: 1, stagger: 0.12, duration: 0.85 },
           "-=1.0"
         )
         .fromTo(
           scrollIndicatorRef.current,
-          { opacity: 0, y: -15 },
-          { opacity: 1, y: 0, duration: 0.6 },
+          { opacity: 0, y: -10 },
+          { opacity: 1, y: 0, duration: 0.5 },
           "-=0.4"
         );
 
-      // 2. Clean Hero Scroll Parallax & Dissolve
+      // 2. Parallax on Scroll for Hero Image & Text
       if (heroSectionRef.current && heroImageRef.current && heroTextRef.current) {
         gsap.to(heroImageRef.current, {
-          yPercent: 30,
-          scale: 1.1,
+          yPercent: 25,
+          scale: 1.08,
           opacity: 0.35,
           ease: "none",
           scrollTrigger: {
@@ -100,61 +96,28 @@ export default function HomePage() {
         });
 
         gsap.to(heroTextRef.current, {
-          yPercent: -35,
+          yPercent: -25,
           opacity: 0,
           ease: "none",
           scrollTrigger: {
             trigger: heroSectionRef.current,
             start: "top top",
-            end: "bottom 30%",
-            scrub: true,
-          },
-        });
-
-        gsap.to(scrollIndicatorRef.current, {
-          opacity: 0,
-          y: -20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSectionRef.current,
-            start: "top top",
-            end: "20% top",
+            end: "bottom 35%",
             scrub: true,
           },
         });
       }
 
-      // 3. Crest Cutout Card Reveal with 3D Float
-      if (crestCardRef.current) {
-        gsap.fromTo(
-          crestCardRef.current,
-          { y: 80, scale: 0.9, opacity: 0.5 },
-          {
-            y: 0,
-            scale: 1,
-            opacity: 1,
-            duration: 1.1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: crestCardRef.current,
-              start: "top 88%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      }
-
-      // 4. Staggered Feature Cards / Icons
+      // 3. Staggered Feature Badges
       if (featuresRef.current) {
-        const featureItems = featuresRef.current.querySelectorAll(".feature-box");
         gsap.fromTo(
-          featureItems,
-          { y: 35, opacity: 0, scale: 0.95 },
+          featuresRef.current.children,
+          { y: 30, opacity: 0, scale: 0.95 },
           {
             y: 0,
             opacity: 1,
             scale: 1,
-            stagger: 0.15,
+            stagger: 0.12,
             duration: 0.7,
             ease: "back.out(1.2)",
             scrollTrigger: {
@@ -166,35 +129,35 @@ export default function HomePage() {
         );
       }
 
-      // 5. Explore Our Range Header Reveal
-      if (rangeHeaderRef.current) {
+      // 4. Students Photo Card
+      if (studentsCardRef.current) {
         gsap.fromTo(
-          rangeHeaderRef.current,
-          { y: 30, opacity: 0 },
+          studentsCardRef.current,
+          { y: 50, scale: 0.94, opacity: 0.8 },
           {
             y: 0,
+            scale: 1,
             opacity: 1,
-            duration: 0.8,
+            duration: 0.9,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: rangeHeaderRef.current,
+              trigger: studentsCardRef.current,
               start: "top 88%",
             },
           }
         );
       }
 
-      // 6. Explore Range Cards Parallax and Scroll Entry
-      rangeCardRefs.current.filter(Boolean).forEach((card, idx) => {
-        // Card frame entry
+      // 5. Explore Range Cards
+      cardRefs.current.filter(Boolean).forEach((card) => {
         gsap.fromTo(
           card,
-          { y: 60, opacity: 0.7, scale: 0.95 },
+          { y: 40, opacity: 0.7, scale: 0.96 },
           {
             y: 0,
             opacity: 1,
             scale: 1,
-            duration: 0.85,
+            duration: 0.75,
             ease: "power2.out",
             scrollTrigger: {
               trigger: card,
@@ -203,26 +166,6 @@ export default function HomePage() {
             },
           }
         );
-
-        // Internal image parallax scrub
-        const innerImg = card?.querySelector(".card-image");
-        if (innerImg) {
-          gsap.fromTo(
-            innerImg,
-            { yPercent: -8, scale: 1.08 },
-            {
-              yPercent: 8,
-              scale: 1.02,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
-            }
-          );
-        }
       });
     }, containerRef);
 
@@ -231,12 +174,12 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="w-full bg-[#071522] text-[#FFFDF9] overflow-hidden">
-      {/* ===================== SECTION 1: FULLSCREEN HERO ===================== */}
+      {/* ===================== SECTION 1: HERO ===================== */}
       <section
         ref={heroSectionRef}
         className="relative min-h-[96vh] flex flex-col justify-between pt-24 pb-8 px-6 overflow-hidden"
       >
-        {/* Background Photo with Parallax Zoom */}
+        {/* Background Student Photo with Parallax */}
         <div
           ref={heroImageRef}
           className="absolute inset-0 z-0 origin-center pointer-events-none"
@@ -249,165 +192,113 @@ export default function HomePage() {
             sizes="(max-width: 440px) 100vw, 440px"
             className="object-cover object-top"
           />
-          {/* Cinematic Vignette Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#071522]/90 via-[#071522]/35 to-[#071522]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#071522] via-[#071522]/70 to-transparent" />
+          {/* Vignette Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#071522]/90 via-[#071522]/30 to-[#071522]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071522] via-[#071522]/65 to-transparent" />
         </div>
 
         {/* Hero Content */}
         <div className="relative z-10 my-auto pt-16">
-          <div ref={heroTextRef} className="space-y-4">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[11px] font-mono tracking-widest text-[#FF6A21] uppercase">
-              <Sparkles size={12} />
-              <span>Premium Uniform Manufacturer</span>
-            </div>
-
-            <h1 className="text-4xl md:text-5xl font-black leading-[1.06] tracking-tight uppercase">
+          <div ref={heroTextRef} className="space-y-5">
+            <h1 className="text-4xl md:text-5xl font-black leading-[1.08] tracking-tight uppercase">
               Uniforms
               <br />
-              That Inspire
+              That Shape
               <br />
               <span className="text-[#FF6A21] drop-shadow-md">Brighter</span>
               <br />
               Tomorrows
             </h1>
 
-            <p className="text-sm md:text-base text-white/80 font-normal leading-snug max-w-[250px]">
-              Professional uniforms for schools, colleges and institutions.
-            </p>
-
-            {/* Pill CTA [ Explore → ] */}
+            {/* Play Button CTA: Watch Our Story */}
             <div className="pt-2">
-              <Link
-                href="/collections"
-                className="inline-flex items-center justify-between pl-5 pr-1.5 py-1.5 rounded-full border border-white/35 bg-white/10 backdrop-blur-md text-sm font-semibold tracking-wide hover:border-[#FF6A21] hover:bg-[#FF6A21] transition-all duration-300 group min-w-[145px] shadow-lg"
+              <button
+                onClick={() => setVideoModalOpen(true)}
+                className="inline-flex items-center space-x-3.5 group select-none active:scale-95 transition-transform"
               >
-                <span>Explore</span>
-                <div className="w-8 h-8 rounded-full bg-white/20 group-hover:bg-white group-hover:text-[#071522] flex items-center justify-center transition-colors ml-4 text-white">
-                  <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                <div className="w-11 h-11 rounded-full bg-[#FF6A21] text-white flex items-center justify-center shadow-lg shadow-[#FF6A21]/40 group-hover:bg-[#FF8A45] group-hover:scale-105 transition-all">
+                  <Play size={16} className="fill-white translate-x-0.5" />
                 </div>
-              </Link>
+                <span className="text-sm font-bold tracking-wide text-white group-hover:text-[#FF6A21] transition-colors">
+                  Watch Our Story
+                </span>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Hero Bottom: Scroll indicator and counter */}
+        {/* Hero Bottom: Scroll prompt */}
         <div
           ref={scrollIndicatorRef}
-          className="relative z-10 flex flex-col items-start pt-6 text-white/70 select-none"
+          className="relative z-10 flex flex-col items-center mx-auto pt-6 text-white/70 select-none"
         >
-          <div className="flex flex-col items-start font-mono text-[11px] leading-tight mb-2">
-            <span className="font-bold text-white">01</span>
-            <span className="h-3 w-[1px] bg-white/40 my-0.5" />
-            <span className="text-white/50">05</span>
-          </div>
-          <div className="flex items-center space-x-1.5 text-xs text-white/60 tracking-wider">
-            <span>Scroll</span>
-            <ArrowDown size={13} className="text-[#FF6A21] animate-bounce" />
+          <span className="text-xs text-white/60 tracking-widest uppercase mb-1">Scroll</span>
+          <div className="w-6 h-6 rounded-full border border-white/30 flex items-center justify-center animate-bounce">
+            <ArrowDown size={12} className="text-[#FF6A21]" />
           </div>
         </div>
       </section>
 
-      {/* ===================== SECTION 2: TRANSITION & CREST CUTOUT ===================== */}
-      <section className="relative bg-[#071522] pt-4">
-        {/* Blazer Crest Cutout Card */}
-        <div className="relative w-full px-6 -mb-8 z-10">
+      {/* ===================== SECTION 2: TRUSTED UNIFORM PARTNER ===================== */}
+      <section
+        ref={trustedSectionRef}
+        className="w-full bg-[#FFFDF9] text-[#071522] pt-12 pb-10 px-6 rounded-t-[44px] shadow-2xl relative"
+      >
+        <div className="space-y-6">
+          <h2 className="text-3xl font-black uppercase tracking-tight leading-[1.1] text-[#071522]">
+            Trusted
+            <br />
+            Uniform Partner
+            <br />
+            for Schools
+            <br />
+            & Colleges
+          </h2>
+
+          {/* 3 Feature Icons */}
           <div
-            ref={crestCardRef}
-            className="relative w-full aspect-[4/5] rounded-[38px] overflow-hidden border-2 border-white/15 shadow-2xl group"
+            ref={featuresRef}
+            className="grid grid-cols-3 gap-2.5 pt-3 border-t border-[#EDE3D5]"
           >
-            <Image
-              src="/images/blazer-crest.jpg"
-              alt="Closeup of tailored blazer with gold crest and tie"
-              fill
-              sizes="(max-width: 440px) 100vw, 440px"
-              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/85 via-transparent to-black/20" />
-            {/* Orange glowing corner glow */}
-            <div className="absolute -bottom-8 -right-8 w-36 h-36 rounded-full bg-[#FF6A21]/30 blur-2xl pointer-events-none" />
+            <div className="flex flex-col items-center text-center p-2.5 rounded-2xl bg-[#F7F0E6]/70 shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-[#EDE3D5]/80 flex items-center justify-center text-[#071522] mb-2">
+                <ShieldCheck size={18} className="stroke-[2.2] text-[#FF6A21]" />
+              </div>
+              <span className="text-[11px] font-extrabold leading-tight uppercase tracking-tight text-[#071522]">
+                Premium
+                <br />
+                Quality
+              </span>
+            </div>
 
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white z-10">
-              <div>
-                <span className="text-[10px] font-mono tracking-widest text-[#FF6A21] uppercase block">
-                  Artisan Quality
-                </span>
-                <span className="text-base font-bold uppercase tracking-tight">
-                  Handcrafted Embroidery
-                </span>
+            <div className="flex flex-col items-center text-center p-2.5 rounded-2xl bg-[#F7F0E6]/70 shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-[#EDE3D5]/80 flex items-center justify-center text-[#071522] mb-2">
+                <Feather size={18} className="stroke-[2.2] text-[#FF6A21]" />
               </div>
-              <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-                <CheckCircle size={15} className="text-[#FF6A21]" />
+              <span className="text-[11px] font-extrabold leading-tight uppercase tracking-tight text-[#071522]">
+                Comfort
+                <br />
+                First
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center text-center p-2.5 rounded-2xl bg-[#F7F0E6]/70 shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-[#EDE3D5]/80 flex items-center justify-center text-[#071522] mb-2">
+                <Users size={18} className="stroke-[2.2] text-[#FF6A21]" />
               </div>
+              <span className="text-[11px] font-extrabold leading-tight uppercase tracking-tight text-[#071522]">
+                For Schools
+                <br />
+                & Colleges
+              </span>
             </div>
           </div>
-        </div>
 
-        {/* Cream Transition Section: Trusted Uniform Partner */}
-        <div className="w-full bg-[#F7F0E6] text-[#071522] pt-16 pb-10 px-6 rounded-t-[44px] shadow-inner">
-          <div className="space-y-6">
-            {/* Heading with Circular Arrow Button */}
-            <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-black uppercase tracking-tight leading-[1.08] text-[#071522]">
-                Trusted
-                <br />
-                Uniform
-                <br />
-                Partner
-              </h2>
-              <Link href="/our-work" aria-label="Explore our work">
-                <CircularButton
-                  variant="solid-dark"
-                  size="md"
-                  ariaLabel="View Our Work"
-                />
-              </Link>
-            </div>
-
-            {/* Three Minimal Feature Badges */}
-            <div
-              ref={featuresRef}
-              className="grid grid-cols-3 gap-2.5 pt-4 border-t border-[#EDE3D5]"
-            >
-              <div className="feature-box flex flex-col items-center text-center p-3 rounded-2xl bg-white/60 shadow-sm border border-white">
-                <div className="w-10 h-10 rounded-full bg-[#EDE3D5]/80 flex items-center justify-center text-[#071522] mb-2 shadow-inner">
-                  <ShieldCheck size={20} className="stroke-[2.2] text-[#FF6A21]" />
-                </div>
-                <span className="text-[11px] font-extrabold leading-tight uppercase tracking-tight text-[#071522]">
-                  Premium
-                  <br />
-                  Quality
-                </span>
-              </div>
-
-              <div className="feature-box flex flex-col items-center text-center p-3 rounded-2xl bg-white/60 shadow-sm border border-white">
-                <div className="w-10 h-10 rounded-full bg-[#EDE3D5]/80 flex items-center justify-center text-[#071522] mb-2 shadow-inner">
-                  <Feather size={20} className="stroke-[2.2] text-[#FF6A21]" />
-                </div>
-                <span className="text-[11px] font-extrabold leading-tight uppercase tracking-tight text-[#071522]">
-                  Comfort
-                  <br />
-                  First
-                </span>
-              </div>
-
-              <div className="feature-box flex flex-col items-center text-center p-3 rounded-2xl bg-white/60 shadow-sm border border-white">
-                <div className="w-10 h-10 rounded-full bg-[#EDE3D5]/80 flex items-center justify-center text-[#071522] mb-2 shadow-inner">
-                  <Users size={20} className="stroke-[2.2] text-[#FF6A21]" />
-                </div>
-                <span className="text-[11px] font-extrabold leading-tight uppercase tracking-tight text-[#071522]">
-                  For Schools
-                  <br />
-                  & Colleges
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Photographic Highlight Card */}
-        <div className="w-full bg-[#F7F0E6] px-6 pb-12">
-          <div className="relative w-full aspect-[4/5] rounded-[34px] overflow-hidden shadow-2xl">
+          {/* Students Photograph */}
+          <div
+            ref={studentsCardRef}
+            className="relative w-full aspect-[4/5] rounded-[34px] overflow-hidden shadow-xl"
+          >
             <Image
               src="/images/school-students.jpg"
               alt="School students in uniform"
@@ -415,79 +306,59 @@ export default function HomePage() {
               sizes="(max-width: 440px) 100vw, 440px"
               className="object-cover object-center"
             />
-            {/* Curved Orange Swoop at bottom right */}
-            <div className="absolute -bottom-8 -right-8 w-40 h-40 rounded-full bg-[#FF6A21] pointer-events-none" />
-            <div className="absolute -bottom-12 -right-4 w-52 h-36 rounded-full bg-[#FF8A45]/40 blur-lg pointer-events-none" />
-
-            <div className="absolute bottom-6 left-6 z-10 max-w-[200px]">
-              <span className="text-white text-xs font-bold uppercase tracking-wider block drop-shadow-md">
-                Empowering Over
-              </span>
-              <span className="text-white text-2xl font-black uppercase tracking-tight drop-shadow-lg">
-                250+ Campuses
-              </span>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* ===================== SECTION 3: EXPLORE OUR RANGE (VISUAL CARDS) ===================== */}
-      <section className="relative bg-[#071522] py-16 px-6">
-        <div ref={rangeHeaderRef} className="space-y-3 mb-8">
-          <div className="flex items-center space-x-2 text-[11px] font-mono tracking-widest text-[#FF6A21] uppercase">
-            <span>02</span>
-            <span>/</span>
-            <span>CATALOGUE</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.08] text-white">
+      {/* ===================== SECTION 3: EXPLORE OUR RANGE ===================== */}
+      <section className="relative bg-[#071522] py-14 px-6">
+        {/* Section Header */}
+        <div
+          ref={exploreHeaderRef}
+          className="flex items-center justify-between pb-8"
+        >
+          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight leading-tight text-white">
             Explore
             <br />
             Our Range
           </h2>
-          <p className="text-xs text-white/70 max-w-[260px] leading-relaxed">
-            Engineered uniforms built for durability, elegance, and daily institutional pride.
-          </p>
+          <Link href="/collections" aria-label="Explore All Collections">
+            <CircularButton
+              variant="outline"
+              size="md"
+              className="hover:border-[#FF6A21] hover:text-[#FF6A21]"
+            />
+          </Link>
         </div>
 
-        {/* Staggered Range Cards */}
-        <div className="space-y-7">
-          {rangeCards.map((card, idx) => (
+        {/* 5 Compact Range Cards Stacked Vertically */}
+        <div className="space-y-4">
+          {rangeCards.map((item, idx) => (
             <div
-              key={card.title}
+              key={item.title}
               ref={(el) => {
-                rangeCardRefs.current[idx] = el;
+                cardRefs.current[idx] = el;
               }}
-              className="relative w-full aspect-[4/5] rounded-[38px] overflow-hidden shadow-2xl border-2 border-white/10 group"
+              className="relative w-full aspect-[16/9] rounded-[28px] overflow-hidden shadow-xl border border-white/10 group"
             >
-              {/* Inner Parallax Image */}
-              <div className="absolute inset-[-10%] w-[120%] h-[120%] card-image pointer-events-none">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  sizes="(max-width: 440px) 100vw, 440px"
-                  className="object-cover object-center"
-                />
-              </div>
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                sizes="(max-width: 440px) 100vw, 440px"
+                className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/95 via-[#071522]/30 to-transparent" />
 
-              {/* Gradient Vignette for Text Legibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/90 via-[#071522]/25 to-transparent" />
-
-              {/* Card Details & Circular Action Button */}
-              <div className="absolute bottom-5 left-6 right-6 flex items-center justify-between z-10">
-                <div>
-                  <span className="text-[10px] font-mono tracking-wider text-[#FF6A21] uppercase block">
-                    {card.category}
-                  </span>
-                  <span className="text-xl font-black text-white tracking-tight uppercase drop-shadow-md">
-                    {card.title}
-                  </span>
-                </div>
-                <Link href={card.href} aria-label={`View ${card.title}`}>
+              <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between z-10">
+                <span className="text-base font-bold text-white tracking-tight uppercase drop-shadow-md">
+                  {item.title}
+                </span>
+                <Link href={item.href} aria-label={`View ${item.title}`}>
                   <CircularButton
-                    variant="solid-light"
+                    variant="glass"
                     size="sm"
-                    className="shadow-xl group-hover:scale-110"
+                    className="group-hover:scale-110"
                   />
                 </Link>
               </div>
@@ -495,47 +366,49 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* View All CTA */}
-        <div className="pt-10 flex justify-center">
-          <Link
-            href="/collections"
-            className="inline-flex items-center justify-between pl-6 pr-2 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-xs font-bold uppercase tracking-wider text-white hover:bg-[#FF6A21] hover:border-[#FF6A21] transition-all duration-300 group shadow-lg"
-          >
-            <span>View Full Collection</span>
-            <div className="w-8 h-8 rounded-full bg-white/20 group-hover:bg-white group-hover:text-[#071522] flex items-center justify-center transition-colors ml-4 text-white">
-              <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-            </div>
+        {/* Bottom Scroll/Explore Prompt */}
+        <div className="pt-12 pb-6 flex flex-col items-center space-y-2 select-none">
+          <Link href="/collections" aria-label="Go to Products">
+            <CircularButton
+              variant="solid-orange"
+              size="md"
+              className="shadow-xl hover:scale-105"
+            />
           </Link>
+          <span className="text-xs font-medium text-white/60 tracking-wider">
+            Scroll to Explore
+          </span>
         </div>
       </section>
 
-      {/* ===================== SECTION 4: CALL TO ACTION BANNER ===================== */}
-      <section className="relative px-6 pb-16 bg-[#071522]">
-        <div className="relative w-full rounded-[36px] bg-gradient-to-br from-[#101D2A] to-[#071522] border border-white/15 p-8 text-center overflow-hidden shadow-2xl space-y-4">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF6A21]/20 rounded-full blur-2xl pointer-events-none" />
-
-          <p className="text-[11px] font-mono tracking-widest text-[#FF6A21] uppercase">
-            BESPOKE UNIFORM ATELIER
-          </p>
-          <h3 className="text-2xl font-black uppercase tracking-tight leading-tight text-white">
-            Ready to Design
-            <br />
-            Your Institution's
-            <br />
-            Identity?
-          </h3>
-
-          <div className="pt-2">
-            <Link
-              href="/contact"
-              className="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-[#FF6A21] hover:bg-[#FF8A45] text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#FF6A21]/30 transition-all duration-300"
+      {/* Video Modal */}
+      {videoModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-6">
+          <div className="relative w-full max-w-sm bg-[#101D2A] rounded-3xl p-6 border border-white/20 text-center space-y-4">
+            <button
+              onClick={() => setVideoModalOpen(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/80 hover:text-white"
             >
-              <span>Get in Touch</span>
-              <ArrowRight size={14} />
-            </Link>
+              <X size={18} />
+            </button>
+            <div className="w-16 h-16 rounded-full bg-[#FF6A21]/20 text-[#FF6A21] flex items-center justify-center mx-auto">
+              <Play size={28} className="fill-[#FF6A21]" />
+            </div>
+            <h3 className="text-xl font-bold text-white uppercase tracking-tight">
+              Our Story
+            </h3>
+            <p className="text-xs text-white/70 leading-relaxed">
+              UNIPOD manufactures premium school, college, and corporate uniforms tailored with precision, craftsmanship, and comfort.
+            </p>
+            <button
+              onClick={() => setVideoModalOpen(false)}
+              className="w-full py-3 rounded-full bg-[#FF6A21] text-white font-bold text-xs uppercase tracking-wider"
+            >
+              Close
+            </button>
           </div>
         </div>
-      </section>
+      )}
     </div>
   );
 }

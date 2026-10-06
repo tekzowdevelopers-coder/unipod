@@ -11,9 +11,9 @@ export default function MobileFrameWrapper({ children }: { children: React.React
 
   const pages = [
     { name: "01 Home", path: "/" },
-    { name: "02 Collections", path: "/collections" },
+    { name: "02 Products", path: "/collections" },
     { name: "03 Custom", path: "/custom" },
-    { name: "04 Our Work", path: "/our-work" },
+    { name: "04 How It Works", path: "/our-work" },
     { name: "05 Contact", path: "/contact" },
   ];
 

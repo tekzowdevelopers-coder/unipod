@@ -4,270 +4,143 @@ import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  GraduationCap,
-  School,
-  Trophy,
-  Briefcase,
-  ChevronLeft,
-  ChevronRight,
-  Award,
+  MessageSquare,
+  PenTool,
+  Layers,
+  Settings,
+  Truck,
+  ArrowDown,
   Sparkles,
+  Shirt,
+  ShieldCheck,
 } from "lucide-react";
-import CircularButton from "@/components/CircularButton";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const galleryCards = [
+const processSteps = [
   {
-    category: "Schools",
-    icon: School,
-    image: "/images/gallery-school.jpg",
-    alt: "School student in courtyard",
-    institution: "St. Xavier's International School",
-    details: "Navy blazers, pleated skirts & tailored trousers",
+    icon: MessageSquare,
+    title: "Discuss Your Needs",
+    desc: "Understand your requirements.",
   },
   {
-    category: "Colleges",
-    icon: GraduationCap,
-    image: "/images/gallery-college.jpg",
-    alt: "College student in uniform blazer",
-    institution: "National College of Technology",
-    details: "Single-breasted wool blazers with gold crests",
+    icon: PenTool,
+    title: "Design & Sampling",
+    desc: "Develop designs and samples.",
   },
   {
-    category: "Sports",
-    icon: Trophy,
-    image: "/images/gallery-sports.jpg",
-    alt: "Sports team students in uniform polo",
-    institution: "Apex Athletic Sports Academy",
-    details: "Dry-fit moisture-wicking team jerseys & tracksuits",
+    icon: Layers,
+    title: "Fabric Selection",
+    desc: "Choose the right materials.",
   },
   {
-    category: "Corporate",
-    icon: Briefcase,
-    image: "/images/gallery-corporate.jpg",
-    alt: "Corporate tailored attire with crest",
-    institution: "Horizon Global Group",
-    details: "Executive staff suiting & administrative attire",
+    icon: Settings,
+    title: "Production",
+    desc: "Skilled manufacturing with quality checks.",
+  },
+  {
+    icon: Truck,
+    title: "Delivery",
+    desc: "On-time delivery to your campus.",
   },
 ];
 
-const testimonials = [
-  {
-    quote: "Excellent quality and perfect fit. Our students love it!",
-    author: "Principal Dr. R. Sharma",
-    institution: "Heritage World Academy",
-    campus: "/images/institution-campus.jpg",
-  },
-  {
-    quote: "UNIPOD elevated our institution's visual identity tremendously. The student-wise packaging saved our team days of work.",
-    author: "Dean of Student Affairs",
-    institution: "National College of Arts & Science",
-    campus: "/images/institution-campus.jpg",
-  },
-  {
-    quote: "Exceptional fabric durability that withstands intense sports training and regular wash cycles effortlessly.",
-    author: "Athletic Director",
-    institution: "Olympus International Sports Hub",
-    campus: "/images/institution-campus.jpg",
-  },
+const campusThumbnails = [
+  "/images/institution-campus.jpg",
+  "/images/gallery-college.jpg",
+  "/images/gallery-school.jpg",
 ];
 
-const stats = [
-  { value: "250+", label: "Leading Institutions" },
-  { value: "500K+", label: "Students Outfitted" },
-  { value: "99.8%", label: "On-Time Dispatch" },
-];
-
-export default function OurWorkPage() {
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
+export default function HowItWorksPage() {
+  const [activeTab, setActiveTab] = useState("Schools");
   const containerRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const quoteRef = useRef<HTMLDivElement>(null);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      cardRefs.current.filter(Boolean).forEach((card) => {
-        // Card entry
+      stepRefs.current.filter(Boolean).forEach((step) => {
         gsap.fromTo(
-          card,
-          { opacity: 0.7, y: 45, scale: 0.96 },
+          step,
+          { opacity: 0.3, y: 25 },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
-            duration: 0.8,
+            duration: 0.6,
             ease: "power2.out",
             scrollTrigger: {
-              trigger: card,
-              start: "top 88%",
+              trigger: step,
+              start: "top 82%",
               toggleActions: "play none none reverse",
             },
           }
         );
-
-        // Internal photo parallax scrub
-        const img = card?.querySelector(".parallax-inner");
-        if (img) {
-          gsap.fromTo(
-            img,
-            { yPercent: -10, scale: 1.08 },
-            {
-              yPercent: 10,
-              scale: 1.02,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
-            }
-          );
-        }
       });
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
-  const handlePrev = () => {
-    setActiveTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
-    animateQuoteChange();
-  };
-
-  const handleNext = () => {
-    setActiveTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
-    animateQuoteChange();
-  };
-
-  const animateQuoteChange = () => {
-    if (quoteRef.current) {
-      gsap.fromTo(
-        quoteRef.current,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
-      );
-    }
-  };
-
   return (
     <div ref={containerRef} className="w-full bg-[#071522] text-[#FFFDF9] min-h-screen">
       {/* ===================== HEADER SECTION ===================== */}
-      <section className="pt-24 pb-8 px-6">
-        <p className="text-[11px] font-bold tracking-[0.25em] text-white/50 uppercase mb-2">
-          OUR WORK
-        </p>
-        <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.12]">
-          Real Uniforms.
+      <section className="pt-24 pb-8 px-6 bg-[#071522]">
+        <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.08] text-white">
+          How
           <br />
-          Real <span className="text-[#FF6A21]">Impact.</span>
+          It Works
         </h1>
-        <p className="text-xs md:text-sm text-white/70 font-normal mt-2 leading-relaxed max-w-[280px]">
-          Trusted by India's premier academic institutions and sports organizations.
+        <p className="text-xs text-white/70 mt-2 leading-relaxed">
+          Design. Fabric. to Campus
         </p>
       </section>
 
-      {/* ===================== STATS BAR ===================== */}
-      <section className="px-6 pb-10">
-        <div className="grid grid-cols-3 gap-2 py-4 px-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center">
-              <span className="text-lg font-black text-[#FF6A21] block tracking-tight">
-                {s.value}
-              </span>
-              <span className="text-[10px] text-white/60 font-medium leading-tight block mt-0.5">
-                {s.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===================== VISUAL GALLERY CARDS ===================== */}
-      <section className="px-6 pb-14 flex flex-col space-y-7">
-        {galleryCards.map((item, idx) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.category}
-              ref={(el) => {
-                cardRefs.current[idx] = el;
-              }}
-              className="relative w-full aspect-[4/5] rounded-[38px] overflow-hidden shadow-2xl border-2 border-white/10 group"
-            >
-              {/* Inner Parallax Image */}
-              <div className="absolute inset-[-10%] w-[120%] h-[120%] parallax-inner pointer-events-none">
-                <Image
-                  src={item.image}
-                  alt={item.alt}
-                  fill
-                  sizes="(max-width: 440px) 100vw, 440px"
-                  className="object-cover object-center"
-                />
-              </div>
-
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/95 via-[#071522]/20 to-transparent" />
-
-              {/* Floating Glass Category Pill Badge */}
-              <div className="absolute top-5 left-5 z-10">
-                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg">
-                  <Icon size={14} className="text-[#FF6A21] stroke-[2.2]" />
-                  <span className="text-xs font-bold uppercase tracking-wider">
-                    {item.category}
-                  </span>
+      {/* ===================== 5 PROCESS STEPS (CREAM BACKGROUND) ===================== */}
+      <section className="bg-[#F7F0E6] text-[#071522] rounded-t-[44px] pt-12 px-6 pb-12 shadow-2xl relative">
+        <div className="space-y-8 max-w-sm mx-auto">
+          {processSteps.map((item, idx) => {
+            const Icon = item.icon;
+            const isLast = idx === processSteps.length - 1;
+            return (
+              <div
+                key={item.title}
+                ref={(el) => {
+                  stepRefs.current[idx] = el;
+                }}
+                className="flex flex-col items-center text-center space-y-2 group"
+              >
+                {/* Circular Navy Badge */}
+                <div className="w-12 h-12 rounded-full bg-[#071522] text-white flex items-center justify-center shadow-lg group-hover:bg-[#FF6A21] transition-colors duration-300">
+                  <Icon size={18} className="stroke-[2.2]" />
                 </div>
-              </div>
 
-              {/* Bottom Institution Title & Details */}
-              <div className="absolute bottom-5 left-6 right-6 z-10 text-white">
-                <h3 className="text-lg font-black uppercase tracking-tight leading-snug drop-shadow-md">
-                  {item.institution}
-                </h3>
-                <p className="text-xs text-white/70 mt-1 line-clamp-1">
-                  {item.details}
-                </p>
+                {/* Title & Description */}
+                <div>
+                  <h3 className="text-base font-black uppercase tracking-tight text-[#071522]">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-[#071522]/70 mt-0.5 leading-snug">
+                    {item.desc}
+                  </p>
+                </div>
+
+                {/* Down Arrow */}
+                {!isLast && (
+                  <div className="pt-2 pb-1">
+                    <ArrowDown size={14} className="text-[#071522]/30" />
+                  </div>
+                )}
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </section>
 
-      {/* ===================== TRUSTED INSTITUTIONS & TESTIMONIALS ===================== */}
-      <section className="bg-[#F7F0E6] text-[#071522] rounded-t-[44px] pt-12 px-6 pb-14 shadow-2xl relative">
-        {/* Header with Navigation Controls */}
-        <div className="flex items-center justify-between pb-6">
-          <h2 className="text-2xl font-black uppercase tracking-tight leading-tight text-[#071522] max-w-[210px]">
-            Trusted by
-            <br />
-            Leading
-            <br />
-            Institutions
-          </h2>
-
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={handlePrev}
-              aria-label="Previous testimonial"
-              className="w-10 h-10 rounded-full bg-[#071522] text-white flex items-center justify-center hover:bg-[#FF6A21] active:scale-95 transition-all shadow-md"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              onClick={handleNext}
-              aria-label="Next testimonial"
-              className="w-10 h-10 rounded-full bg-white text-[#071522] border border-[#071522]/20 flex items-center justify-center hover:bg-[#FF6A21] hover:text-white active:scale-95 transition-all shadow-md"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        </div>
-
-        {/* Institution Campus Image Card */}
-        <div className="relative w-full aspect-[16/11] rounded-[32px] overflow-hidden shadow-xl border border-[#071522]/10 mb-6">
+      {/* ===================== TRUSTED BY LEADING INSTITUTIONS ===================== */}
+      <section className="bg-[#FFFDF9] text-[#071522] pt-8 px-6 pb-10">
+        <div className="relative w-full aspect-[16/11] rounded-[34px] overflow-hidden shadow-xl mb-6">
           <Image
-            src={testimonials[activeTestimonial].campus}
+            src="/images/institution-campus.jpg"
             alt="Institution campus building"
             fill
             sizes="(max-width: 440px) 100vw, 440px"
@@ -275,62 +148,111 @@ export default function OurWorkPage() {
           />
         </div>
 
-        {/* Testimonial Quote & Attribution with Animated Transition */}
-        <div ref={quoteRef} className="space-y-3 text-center px-2">
-          <span className="text-3xl font-serif text-[#FF6A21] block leading-none">“</span>
-          <p className="text-sm font-bold text-[#071522] leading-snug max-w-[270px] mx-auto">
-            {testimonials[activeTestimonial].quote}
-          </p>
-          <div className="pt-1">
-            <p className="text-xs font-black uppercase text-[#071522]">
-              {testimonials[activeTestimonial].institution}
-            </p>
-            <p className="text-[11px] text-[#071522]/60 font-medium">
-              {testimonials[activeTestimonial].author}
-            </p>
+        <div className="space-y-4">
+          <h2 className="text-xl font-black uppercase tracking-tight text-[#071522]">
+            Trusted by Leading Institutions
+          </h2>
+
+          {/* Category Tabs: Schools, Colleges, Corporate */}
+          <div className="flex items-center space-x-2">
+            {["Schools", "Colleges", "Corporate"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-3.5 py-1 rounded-full text-xs font-bold transition-all ${
+                  activeTab === tab
+                    ? "bg-[#071522] text-white shadow-sm"
+                    : "bg-[#EDE3D5]/60 text-[#071522]/70 hover:bg-[#EDE3D5]"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
-          {/* Pagination Dots */}
-          <div className="flex items-center justify-center space-x-2 pt-4">
-            {testimonials.map((_, i) => (
-              <button
+          {/* 3 Campus Thumbnails */}
+          <div className="grid grid-cols-3 gap-2 pt-2">
+            {campusThumbnails.map((src, i) => (
+              <div
                 key={i}
-                onClick={() => {
-                  setActiveTestimonial(i);
-                  animateQuoteChange();
-                }}
-                aria-label={`Go to slide ${i + 1}`}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  activeTestimonial === i
-                    ? "w-6 bg-[#FF6A21]"
-                    : "w-2 bg-[#071522]/20 hover:bg-[#071522]/40"
-                }`}
-              />
+                className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md border border-[#EDE3D5]"
+              >
+                <Image
+                  src={src}
+                  alt="Campus building thumbnail"
+                  fill
+                  sizes="120px"
+                  className="object-cover object-center"
+                />
+              </div>
             ))}
           </div>
         </div>
-
-        {/* Orange Wave Graphic */}
-        <div className="relative w-full h-16 mt-8 overflow-hidden pointer-events-none">
-          <div className="absolute -bottom-6 -left-6 right-0 h-24 bg-gradient-to-r from-[#FF6A21] to-[#FF8A45] rounded-t-full opacity-90" />
-        </div>
       </section>
 
-      {/* Dark Footer Transition CTA */}
-      <section className="bg-[#071522] py-12 px-6 text-center space-y-4">
-        <h4 className="text-xl font-black uppercase tracking-tight text-white">
-          Empower Your Institution
-        </h4>
-        <p className="text-xs text-white/70 max-w-[240px] mx-auto">
-          Contact our uniform design team to schedule an on-campus consultation.
-        </p>
-        <Link
-          href="/contact"
-          className="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-[#FF6A21] text-white text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#FF6A21]/30 hover:bg-[#FF8A45] transition-all"
-        >
-          <span>Request Campus Visit</span>
-          <CircularButton variant="solid-orange" size="sm" className="w-5 h-5 bg-transparent border-none text-white" />
-        </Link>
+      {/* ===================== QUALITY IN EVERY DETAIL (DARK NAVY) ===================== */}
+      <section className="bg-[#071522] text-white py-12 px-6">
+        <div className="space-y-6">
+          <h3 className="text-2xl font-black uppercase tracking-tight text-white">
+            Quality
+            <br />
+            in Every Detail
+          </h3>
+
+          {/* 3 Minimal Icons */}
+          <div className="grid grid-cols-3 gap-3 pt-2">
+            <div className="flex flex-col items-center text-center p-3 rounded-2xl bg-white/5 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#FF6A21] mb-2">
+                <Layers size={18} />
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-tight">
+                Premium
+                <br />
+                Fabric
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center text-center p-3 rounded-2xl bg-white/5 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#FF6A21] mb-2">
+                <Shirt size={18} />
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-tight">
+                Perfect
+                <br />
+                Fitting
+              </span>
+            </div>
+
+            <div className="flex flex-col items-center text-center p-3 rounded-2xl bg-white/5 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#FF6A21] mb-2">
+                <ShieldCheck size={18} />
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-tight">
+                Long
+                <br />
+                Lasting
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom UNIPOD Label Photo Card */}
+          <div className="relative w-full aspect-[16/10] rounded-[32px] overflow-hidden shadow-2xl border border-white/10 mt-6">
+            <Image
+              src="/images/custom-tailoring.jpg"
+              alt="UNIPOD woven garment label"
+              fill
+              sizes="(max-width: 440px) 100vw, 440px"
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/90 via-transparent to-black/20" />
+            <div className="absolute bottom-5 left-6 right-6 flex items-center justify-between text-white z-10">
+              <span className="text-xs font-mono font-bold tracking-widest uppercase text-[#FF6A21]">
+                Guaranteed Craftsmanship
+              </span>
+              <span className="text-sm font-black uppercase">UNIPOD Certified</span>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );

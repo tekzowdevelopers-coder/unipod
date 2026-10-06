@@ -1,95 +1,68 @@
 ﻿"use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import CircularButton from "@/components/CircularButton";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const allCollections = [
+const products = [
   {
     id: "school",
     title: "School Uniforms",
-    category: "Schools",
-    badge: "Grades K-12",
-    features: ["Breathable Cotton Rich", "Fade-Resistant Dyes", "Reinforced Knees & Elbows"],
-    image: "/images/collections-school.jpg",
-    alt: "Happy school students in uniform",
+    image: "/images/hero-student.jpg",
+    alt: "Smiling school student in uniform",
     href: "/custom?category=school",
   },
   {
     id: "college",
     title: "College Uniforms",
-    category: "Colleges",
-    badge: "Degree & Professional",
-    features: ["Bespoke Navy Blazers", "Anti-Wrinkle Poly-Wool", "Institutional Crest"],
     image: "/images/collections-college.jpg",
     alt: "College student in tailored blazer",
     href: "/custom?category=college",
   },
   {
-    id: "sportswear",
-    title: "Sportswear",
-    category: "Sports",
-    badge: "Athletics & Teams",
-    features: ["Moisture-Wicking Tech", "High Elasticity Stretch", "Vibrant Institutional Color"],
+    id: "sports",
+    title: "Sports Wear",
     image: "/images/collections-sports.jpg",
-    alt: "Students in athletic sports polo uniform",
+    alt: "Students in sports polo uniform",
     href: "/custom?category=sports",
   },
   {
     id: "corporate",
     title: "Corporate Attire",
-    category: "Corporate",
-    badge: "Staff & Faculty",
-    features: ["Formal Tailoring", "Premium Suiting Wool", "Crisp Fit Finish"],
     image: "/images/collections-corporate.jpg",
-    alt: "Mannequin dressed in corporate blazer and tie",
+    alt: "Corporate tailored attire",
     href: "/custom?category=corporate",
   },
   {
     id: "accessories",
     title: "Accessories",
-    category: "Accessories",
-    badge: "Complete Uniform Kit",
-    features: ["Ergonomic Backpacks", "Jacquard Woven Ties", "Genuine Leather Belts"],
     image: "/images/collections-accessories.jpg",
-    alt: "School backpack, belt, bow tie and socks",
+    alt: "School backpack, belt, socks",
     href: "/custom?category=accessories",
   },
 ];
 
-const categories = ["All", "Schools", "Colleges", "Sports", "Corporate", "Accessories"];
-
-export default function CollectionsPage() {
-  const [selectedCat, setSelectedCat] = useState("All");
+export default function ProductsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const filtered =
-    selectedCat === "All"
-      ? allCollections
-      : allCollections.filter((c) => c.category === selectedCat);
+  const bottomCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       cardRefs.current.filter(Boolean).forEach((card) => {
-        // Entrance animation
         gsap.fromTo(
           card,
-          {
-            y: 50,
-            scale: 0.95,
-            opacity: 0.8,
-          },
+          { y: 35, opacity: 0.8, scale: 0.97 },
           {
             y: 0,
-            scale: 1,
             opacity: 1,
-            duration: 0.8,
+            scale: 1,
+            duration: 0.7,
             ease: "power2.out",
             scrollTrigger: {
               trigger: card,
@@ -98,171 +71,119 @@ export default function CollectionsPage() {
             },
           }
         );
-
-        // Internal photo parallax scrub
-        const img = card?.querySelector(".parallax-img");
-        if (img) {
-          gsap.fromTo(
-            img,
-            { yPercent: -10, scale: 1.08 },
-            {
-              yPercent: 10,
-              scale: 1.02,
-              ease: "none",
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: true,
-              },
-            }
-          );
-        }
       });
+
+      if (bottomCardRef.current) {
+        gsap.fromTo(
+          bottomCardRef.current,
+          { y: 40, opacity: 0.8 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: bottomCardRef.current,
+              start: "top 85%",
+            },
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, [selectedCat]);
+  }, []);
 
   return (
     <div ref={containerRef} className="w-full bg-[#071522] text-[#FFFDF9] min-h-screen">
       {/* ===================== HEADER SECTION ===================== */}
-      <section className="pt-24 pb-8 px-6 relative">
-        <div className="space-y-2">
-          <p className="text-[11px] font-bold tracking-[0.25em] text-white/50 uppercase">
-            OUR COLLECTIONS
-          </p>
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.12]">
-            Designed
-            <br />
-            for Every
-            <br />
-            <span className="text-[#FF6A21]">Journey</span>
-          </h1>
-          {/* Accent small horizontal line */}
-          <div className="w-8 h-1 bg-white/40 rounded-full mt-3" />
-        </div>
+      <section className="pt-24 pb-8 px-6 relative bg-[#071522]">
+        <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight leading-[1.08] text-white">
+          Our
+          <br />
+          Products
+        </h1>
+        <p className="text-xs text-white/70 mt-2 leading-relaxed max-w-[200px]">
+          Designed for Every
+          <br />
+          Occasion
+        </p>
 
-        {/* Filter categories pill bar */}
-        <div className="flex items-center space-x-2 overflow-x-auto no-scrollbar pt-6 pb-2 -mx-6 px-6">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCat(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-300 ${
-                selectedCat === cat
-                  ? "bg-[#FF6A21] text-white shadow-md shadow-[#FF6A21]/30"
-                  : "bg-white/10 text-white/70 hover:bg-white/15 hover:text-white"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {/* Decorative orange wave curve swoop */}
+        <div className="absolute -bottom-6 right-0 w-36 h-16 bg-[#F7F0E6] rounded-tl-full pointer-events-none" />
       </section>
 
-      {/* ===================== CURVED BACKGROUND WRAPPER ===================== */}
-      <div className="relative bg-[#F7F0E6] rounded-t-[44px] pt-10 px-6 pb-16 shadow-2xl text-[#071522]">
-        {/* Visual Cards */}
-        <div className="flex flex-col space-y-8">
-          {filtered.map((item, idx) => (
+      {/* ===================== PRODUCT CARDS LIST (CREAM BACKGROUND) ===================== */}
+      <div className="relative bg-[#F7F0E6] rounded-t-[44px] pt-8 px-6 pb-16 shadow-2xl text-[#071522]">
+        <div className="space-y-8">
+          {products.map((item, idx) => (
             <div
               key={item.id}
               ref={(el) => {
                 cardRefs.current[idx] = el;
               }}
-              className="relative w-full aspect-[4/5] rounded-[38px] overflow-hidden shadow-2xl border-2 border-white/60 group"
+              className="space-y-3 group"
             >
-              {/* Inner Parallax Image */}
-              <div className="absolute inset-[-10%] w-[120%] h-[120%] parallax-img pointer-events-none">
+              {/* Product Photograph */}
+              <div className="relative w-full aspect-[4/5] rounded-[34px] overflow-hidden shadow-xl border-2 border-white">
                 <Image
                   src={item.image}
                   alt={item.alt}
                   fill
                   sizes="(max-width: 440px) 100vw, 440px"
-                  className="object-cover object-center"
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
 
-              {/* Exact Dark Gradient Vignette for Text Legibility */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/95 via-[#071522]/30 to-transparent" />
-
-              {/* Top Floating Badge */}
-              <div className="absolute top-5 left-6 z-10">
-                <span className="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-[10px] font-mono tracking-wider text-white uppercase border border-white/30">
-                  {item.badge}
-                </span>
-              </div>
-
-              {/* Card Label & Circular Arrow Button */}
-              <div className="absolute bottom-5 left-6 right-6 flex items-end justify-between z-10 text-white">
-                <div>
-                  <h3 className="text-xl font-black tracking-tight uppercase drop-shadow-md">
-                    {item.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5 mt-2">
-                    {item.features.slice(0, 2).map((f) => (
-                      <span
-                        key={f}
-                        className="text-[10px] font-medium text-white/80 bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-md"
-                      >
-                        {f}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <Link href={item.href} aria-label={`View ${item.title}`}>
-                  <CircularButton
-                    variant="solid-light"
-                    size="sm"
-                    className="shadow-lg group-hover:scale-110 ml-3"
-                  />
+              {/* Title & View Collection CTA */}
+              <div className="px-1">
+                <h3 className="text-xl font-black text-[#071522] uppercase tracking-tight">
+                  {item.title}
+                </h3>
+                <Link
+                  href={item.href}
+                  className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#FF6A21] hover:text-[#FF8A45] tracking-wide pt-1 transition-colors"
+                >
+                  <span>View Collection</span>
+                  <ArrowRight size={13} className="stroke-[2.5]" />
                 </Link>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Feature Highlights Grid */}
-        <div className="mt-12 p-6 rounded-3xl bg-white shadow-lg border border-[#EDE3D5] space-y-4">
-          <div className="flex items-center space-x-2 text-[#FF6A21]">
-            <Sparkles size={16} />
-            <span className="text-xs font-black uppercase tracking-wider">
-              Fabric Engineering
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 text-xs text-[#071522]">
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 size={14} className="text-[#FF6A21] shrink-0" />
-              <span>Anti-Pilling Finish</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 size={14} className="text-[#FF6A21] shrink-0" />
-              <span>Color Fastness Guarantee</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 size={14} className="text-[#FF6A21] shrink-0" />
-              <span>Skin-Safe Dyes</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle2 size={14} className="text-[#FF6A21] shrink-0" />
-              <span>All-Day Breathability</span>
-            </div>
-          </div>
-        </div>
+        {/* ===================== BOTTOM PHOTO BANNER ===================== */}
+        <div
+          ref={bottomCardRef}
+          className="mt-12 relative w-full aspect-[4/5] rounded-[38px] overflow-hidden shadow-2xl"
+        >
+          <Image
+            src="/images/students-campus.jpg"
+            alt="Students on campus"
+            fill
+            sizes="(max-width: 440px) 100vw, 440px"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#071522]/95 via-[#071522]/40 to-transparent" />
 
-        {/* Bottom CTA Button */}
-        <div className="pt-10 flex flex-col items-center">
-          <Link
-            href="/custom"
-            className="inline-flex items-center justify-between pl-6 pr-2 py-2 rounded-full border border-[#071522]/20 bg-[#071522] text-white text-xs font-bold uppercase tracking-wider hover:bg-[#FF6A21] transition-all duration-300 group shadow-md"
-          >
-            <span>Request Custom Catalogue</span>
-            <div className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center transition-colors ml-4 text-white">
-              <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-            </div>
-          </Link>
+          {/* Banner Heading & Action Button */}
+          <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between z-10 text-white">
+            <h4 className="text-2xl font-black uppercase tracking-tight leading-tight max-w-[220px]">
+              Complete
+              <br />
+              Uniform Solutions
+              <br />
+              Under One Roof
+            </h4>
+
+            <Link href="/custom" aria-label="Explore Customization">
+              <CircularButton
+                variant="solid-orange"
+                size="md"
+                className="shadow-xl hover:scale-105 ml-2"
+              />
+            </Link>
+          </div>
         </div>
       </div>
     </div>
